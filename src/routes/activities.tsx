@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { Phone, MessageCircle, CheckCircle2 } from "lucide-react";
 import { SPORTS } from "@/lib/sports";
 import badmintonImg from "@/assets/sport-badminton.jpg";
@@ -23,8 +24,49 @@ export const Route = createFileRoute("/activities")({
 });
 
 function ActivitiesPage() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const sections = Array.from(root.querySelectorAll('section')) as HTMLElement[];
+    sections.forEach((s, i) => {
+      s.classList.add('reveal-hidden');
+      s.dataset.index = String(i);
+      const cards = Array.from(s.querySelectorAll('.card-lift')) as HTMLElement[];
+      cards.forEach((c, j) => {
+        c.classList.add('reveal-hidden');
+        c.dataset.index = String(i * 10 + j);
+      });
+    });
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            if (!el.classList.contains('reveal-up')) {
+              el.classList.remove('reveal-hidden');
+              el.classList.add('reveal-up');
+              const idx = Number(el.dataset.index || 0);
+              el.style.animationDelay = `${idx * 60}ms`;
+            }
+            obs.unobserve(el);
+          }
+        });
+      },
+      { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+    );
+
+    const targets = Array.from(root.querySelectorAll('.reveal-hidden')) as HTMLElement[];
+    targets.forEach((t) => obs.observe(t));
+
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={rootRef}>
       <section className="relative pt-24 pb-12 mx-auto max-w-7xl px-5 lg:px-8">
         <div className="text-xs uppercase tracking-[0.25em] text-highlight font-semibold">Our activities</div>
         <h1 className="mt-3 text-5xl sm:text-7xl font-display font-extrabold text-balance">Six sports.<br /><span className="gradient-text">One premium arena.</span></h1>
@@ -64,6 +106,6 @@ function ActivitiesPage() {
           </section>
         ))}
       </div>
-    </>
+    </div>
   );
 }

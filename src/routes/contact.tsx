@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapPin, Phone, MessageCircle, Navigation, Clock, CheckCircle2 } from "lucide-react";
 import gallery1 from "@/assets/gallery-1.jpg";
 
@@ -16,6 +16,41 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const sections = Array.from(root.querySelectorAll('section')) as HTMLElement[];
+    sections.forEach((s, i) => {
+      s.classList.add('reveal-hidden');
+      s.dataset.index = String(i);
+      const cards = Array.from(s.querySelectorAll('.card-lift')) as HTMLElement[];
+      cards.forEach((c, j) => {
+        c.classList.add('reveal-hidden');
+        c.dataset.index = String(i * 10 + j);
+      });
+    });
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const el = entry.target as HTMLElement;
+        if (entry.isIntersecting) {
+          if (!el.classList.contains('reveal-up')) {
+            el.classList.remove('reveal-hidden');
+            el.classList.add('reveal-up');
+            const idx = Number(el.dataset.index || 0);
+            el.style.animationDelay = `${idx * 60}ms`;
+          }
+          obs.unobserve(el);
+        }
+      });
+    }, { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+
+    const targets = Array.from(root.querySelectorAll('.reveal-hidden')) as HTMLElement[];
+    targets.forEach((t) => obs.observe(t));
+    return () => obs.disconnect();
+  }, []);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +62,7 @@ function ContactPage() {
   };
 
   return (
-    <>
+    <div ref={rootRef}>
       <section className="pt-20 pb-10 mx-auto max-w-7xl px-5 lg:px-8">
         <div className="text-xs uppercase tracking-[0.25em] text-highlight font-semibold">Contact</div>
         <h1 className="mt-3 text-5xl sm:text-6xl font-display font-extrabold text-balance">Let's <span className="gradient-text">connect</span>.</h1>
@@ -111,6 +146,6 @@ function ContactPage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

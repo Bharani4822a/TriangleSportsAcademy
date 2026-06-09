@@ -160,20 +160,42 @@
   }
 
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(24px); }
+    from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .reveal-up { animation: fade-up 0.8s var(--transition-smooth) both; }
+  .reveal-up { animation: fade-up 0.55s var(--transition-smooth) both; }
   .reveal-delay-1 { animation-delay: 0.1s; }
   .reveal-delay-2 { animation-delay: 0.25s; }
   .reveal-delay-3 { animation-delay: 0.4s; }
   .reveal-delay-4 { animation-delay: 0.55s; }
 
+  .reveal-hidden { opacity: 0; transform: translateY(24px); }
+
   @keyframes scale-in {
-    from { opacity: 0; transform: scale(0.92); }
+    from { opacity: 0; transform: scale(0.95); }
     to   { opacity: 1; transform: scale(1); }
   }
-  .reveal-scale { animation: scale-in 0.7s var(--transition-smooth) both; }
+  .reveal-scale { animation: scale-in 0.55s var(--transition-smooth) both; }
+
+  /* Faster reveal for small pop-up cards */
+  .reveal-up-fast { animation: fade-up 0.35s var(--transition-smooth) both; }
+
+  /* Mobile nav open animation */
+  @keyframes mobile-slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mobile-nav-open .mobile-nav-item {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: mobile-slide-up 0.36s var(--transition-smooth) both;
+  }
+  .mobile-nav-open .mobile-nav-item:nth-child(1) { animation-delay: 0.04s; }
+  .mobile-nav-open .mobile-nav-item:nth-child(2) { animation-delay: 0.10s; }
+  .mobile-nav-open .mobile-nav-item:nth-child(3) { animation-delay: 0.16s; }
+  .mobile-nav-open .mobile-nav-item:nth-child(4) { animation-delay: 0.22s; }
+  .mobile-nav-open .mobile-nav-item:nth-child(5) { animation-delay: 0.28s; }
+  .mobile-nav-open .mobile-nav-item:nth-child(6) { animation-delay: 0.34s; }
 
   .stadium-grid {
     background-image:

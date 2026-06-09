@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { ArrowRight, Phone, Sparkles, ShieldCheck, Users, Lightbulb, Clock, Trophy, Star, Quote } from "lucide-react";
 import heroImg from "@/assets/hero-arena.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
@@ -47,11 +48,67 @@ const testimonials = [
   { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
   { n: "Priya S.", r: "Positive environment and like-minded people. Best place to train consistently.", s: "Gym Member" },
   { n: "Arun M.", r: "The lighting and indoor courts are easily the best in Salem. Booking is also smooth.", s: "Weekend Player" },
+  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
+  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
+  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
 ];
 
 function HomePage() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const sections = Array.from(root.querySelectorAll('section')) as HTMLElement[];
+    sections.forEach((s, i) => {
+      if (!s.classList.contains('reveal-up') && !s.classList.contains('reveal-scale')) {
+        s.classList.add('reveal-up');
+        s.style.animationDelay = `${i * 80}ms`;
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    // Ensure cards are hidden initially
+    const cards = Array.from(root.querySelectorAll('.card-lift')) as HTMLElement[];
+    cards.forEach((c, i) => {
+      c.dataset.index = String(i);
+      c.classList.add('reveal-hidden');
+    });
+
+    // Observe any element marked with `reveal-hidden` (cards or sections)
+    const targets = Array.from(root.querySelectorAll('.reveal-hidden')) as HTMLElement[];
+    targets.forEach((t, i) => {
+      if (!t.dataset.index) t.dataset.index = String(i);
+    });
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            if (!el.classList.contains('reveal-up')) {
+              el.classList.remove('reveal-hidden');
+              el.classList.add('reveal-up');
+              const idx = Number(el.dataset.index || 0);
+              el.style.animationDelay = `${idx * 60}ms`;
+            }
+            obs.unobserve(el);
+          }
+        });
+      },
+      { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+    );
+
+    targets.forEach((t) => obs.observe(t));
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={rootRef}>
       {/* HERO */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
         <img src={heroImg} alt="Indoor sports arena" width={1920} height={1080} className="absolute inset-0 h-full w-full object-cover" />
@@ -167,7 +224,7 @@ function HomePage() {
       </section>
 
       {/* COURT BOOKING HIGHLIGHT */}
-      <section className="relative mx-auto max-w-7xl px-5 lg:px-8 py-24">
+      <section className="relative mx-auto max-w-7xl px-5 lg:px-8 py-24 reveal-hidden">
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-glow">
             <img src={gallery1} alt="Indoor courts" loading="lazy" width={1280} height={896} className="h-full w-full object-cover" />
@@ -265,6 +322,6 @@ function HomePage() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

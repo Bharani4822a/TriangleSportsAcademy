@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CheckCircle2, Calendar, Clock, Phone } from "lucide-react";
 import { SPORTS } from "@/lib/sports";
 
@@ -19,6 +19,42 @@ function BookingPage() {
     name: "", phone: "", sport: "Badminton", date: "", time: "", duration: "1", message: "",
   });
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const sections = Array.from(root.querySelectorAll('section')) as HTMLElement[];
+    sections.forEach((s, i) => {
+      s.classList.add('reveal-hidden');
+      s.dataset.index = String(i);
+      const cards = Array.from(s.querySelectorAll('.card-lift')) as HTMLElement[];
+      cards.forEach((c, j) => {
+        c.classList.add('reveal-hidden');
+        c.dataset.index = String(i * 10 + j);
+      });
+    });
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const el = entry.target as HTMLElement;
+        if (entry.isIntersecting) {
+          if (!el.classList.contains('reveal-up')) {
+            el.classList.remove('reveal-hidden');
+            el.classList.add('reveal-up');
+            const idx = Number(el.dataset.index || 0);
+            el.style.animationDelay = `${idx * 60}ms`;
+          }
+          obs.unobserve(el);
+        }
+      });
+    }, { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+
+    const targets = Array.from(root.querySelectorAll('.reveal-hidden')) as HTMLElement[];
+    targets.forEach((t) => obs.observe(t));
+    return () => obs.disconnect();
+  }, []);
+
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const onSubmit = (e: React.FormEvent) => {
@@ -32,21 +68,23 @@ function BookingPage() {
 
   if (submitted) {
     return (
-      <section className="min-h-[80vh] flex items-center mx-auto max-w-3xl px-5 lg:px-8 py-24">
-        <div className="w-full glass-strong rounded-3xl p-10 text-center border reveal-scale">
-          <div className="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-accent to-highlight inline-flex items-center justify-center shadow-accent-glow">
-            <CheckCircle2 className="h-8 w-8 text-accent-foreground" />
+      <div ref={rootRef}>
+        <section className="min-h-[80vh] flex items-center mx-auto max-w-3xl px-5 lg:px-8 py-24">
+          <div className="w-full glass-strong rounded-3xl p-10 text-center border reveal-scale">
+            <div className="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-accent to-highlight inline-flex items-center justify-center shadow-accent-glow">
+              <CheckCircle2 className="h-8 w-8 text-accent-foreground" />
+            </div>
+            <h1 className="mt-5 text-3xl sm:text-4xl font-display font-bold">Booking inquiry received!</h1>
+            <p className="mt-3 text-muted-foreground">We will contact you shortly to confirm your booking. For urgent slots, call us directly.</p>
+            <a href="tel:09500186817" className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-highlight text-primary-foreground font-semibold shadow-glow"><Phone className="h-4 w-4" /> Call 095001 86817</a>
           </div>
-          <h1 className="mt-5 text-3xl sm:text-4xl font-display font-bold">Booking inquiry received!</h1>
-          <p className="mt-3 text-muted-foreground">We will contact you shortly to confirm your booking. For urgent slots, call us directly.</p>
-          <a href="tel:09500186817" className="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-highlight text-primary-foreground font-semibold shadow-glow"><Phone className="h-4 w-4" /> Call 095001 86817</a>
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
   return (
-    <>
+    <div ref={rootRef}>
       <section className="pt-20 pb-10 mx-auto max-w-7xl px-5 lg:px-8">
         <div className="text-xs uppercase tracking-[0.25em] text-highlight font-semibold">Court booking</div>
         <h1 className="mt-3 text-5xl sm:text-6xl font-display font-extrabold text-balance">Reserve your <span className="gradient-text">slot</span>.</h1>
@@ -100,7 +138,7 @@ function BookingPage() {
           </div>
         </aside>
       </section>
-    </>
+    </div>
   );
 }
 

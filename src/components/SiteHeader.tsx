@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import logo from "@/assets/logo.png";
 
 const links = [
   { to: "/", label: "Home" },
@@ -20,15 +21,12 @@ export function SiteHeader() {
       <div className="glass-strong border-b border-border">
         <div className="mx-auto max-w-7xl px-5 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-highlight shadow-glow">
-              <span className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <svg viewBox="0 0 24 24" className="relative h-5 w-5 text-primary-foreground" fill="currentColor">
-                <path d="M12 2L2 20h20L12 2zm0 5l6 11H6l6-11z" />
-              </svg>
+            <span className="relative inline-flex h-12 w-12 items-center justify-center rounded-lg overflow-hidden">
+              <img src={logo} alt="Triangle Sports Academy" className="relative h-11 w-11 object-contain" />
             </span>
             <div className="leading-tight">
-              <div className="font-display font-bold text-base tracking-tight">Triangle</div>
-              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Sports Academy</div>
+              <div className="font-display font-bold text-base tracking-tight">Triangle Sports Academy</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground"></div>
             </div>
           </Link>
 
@@ -70,14 +68,14 @@ export function SiteHeader() {
         </div>
 
         {open && (
-          <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur">
+          <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur mobile-nav-open">
             <nav className="px-5 py-3 flex flex-col">
               {links.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
                   onClick={() => setOpen(false)}
-                  className={`py-2.5 text-sm font-medium ${
+                  className={`mobile-nav-item py-2.5 text-sm font-medium ${
                     path === l.to ? "text-primary" : "text-muted-foreground"
                   }`}
                 >

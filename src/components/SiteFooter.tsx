@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Phone, Clock, Instagram, Facebook } from "lucide-react";
+import logo from "../assets/logo.png";
 
 export function SiteFooter() {
   return (
@@ -8,14 +9,10 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8 py-16 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2.5 mb-4">
-            <span className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-highlight shadow-glow inline-flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="h-5 w-5 text-primary-foreground" fill="currentColor">
-                <path d="M12 2L2 20h20L12 2zm0 5l6 11H6l6-11z" />
-              </svg>
-            </span>
+            <img src={logo} alt="Triangle Sports Academy logo" className="h-9 w-9 rounded-lg object-cover" />
             <div>
-              <div className="font-display font-bold">Triangle</div>
-              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Sports Academy</div>
+              <div className="font-display font-bold">Triangle Sports Academy</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground"></div>
             </div>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">

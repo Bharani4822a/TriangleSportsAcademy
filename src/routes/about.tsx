@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Target, Eye, Heart, Trophy } from "lucide-react";
+import { useEffect, useRef } from "react";
 import heroImg from "@/assets/hero-arena.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
 
@@ -21,8 +22,58 @@ const counters = [
 ];
 
 function AboutPage() {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    // Select all sections except the first (hero) so hero keeps its inline reveals
+    const allSections = Array.from(root.querySelectorAll('section')) as HTMLElement[];
+    const sections = allSections.slice(1);
+
+    sections.forEach((s, i) => {
+      s.classList.add('reveal-hidden');
+      s.dataset.index = String(i);
+      // also hide inner card-lift elements if present
+      const cards = Array.from(s.querySelectorAll('.card-lift')) as HTMLElement[];
+      cards.forEach((c, j) => {
+        c.classList.add('reveal-hidden');
+        c.dataset.index = String(i * 10 + j);
+      });
+    });
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            if (!el.classList.contains('reveal-up') && !el.classList.contains('reveal-up-fast')) {
+              el.classList.remove('reveal-hidden');
+              const idx = Number(el.dataset.index || 0);
+              if (el.classList.contains('coach-card')) {
+                el.classList.add('reveal-up-fast');
+                el.style.animationDelay = `${idx * 30}ms`;
+              } else {
+                el.classList.add('reveal-up');
+                el.style.animationDelay = `${idx * 60}ms`;
+              }
+            }
+            obs.unobserve(el);
+          }
+        });
+      },
+      { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+    );
+
+    const targets = Array.from(root.querySelectorAll('.reveal-hidden')) as HTMLElement[];
+    targets.forEach((t) => obs.observe(t));
+
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={rootRef}>
       <section className="relative h-[55vh] min-h-[420px] flex items-end overflow-hidden">
         <img src={heroImg} alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, oklch(0.18 0.04 260 / 0.4), oklch(0.18 0.04 260 / 0.95))" }} />
@@ -114,7 +165,7 @@ function AboutPage() {
         
         <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Coach 1 */}
-          <div className="card-lift glass rounded-3xl p-8 border text-center">
+          <div className="card-lift coach-card glass rounded-3xl p-8 border text-center">
             <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-glow mb-6 relative">
               <img 
                 src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&auto=format&fit=crop&q=60" 
@@ -129,7 +180,7 @@ function AboutPage() {
           </div>
 
           {/* Coach 2 */}
-          <div className="card-lift glass rounded-3xl p-8 border text-center">
+          <div className="card-lift coach-card glass rounded-3xl p-8 border text-center">
             <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-glow mb-6 relative">
               <img 
                 src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&auto=format&fit=crop&q=60" 
@@ -138,8 +189,8 @@ function AboutPage() {
               />
               <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-full"></div>
             </div>
-            <h4 className="text-2xl font-display font-bold">Hariharan P</h4>
-            <div className="text-highlight font-medium mt-1 mb-3 uppercase tracking-wider text-sm">Senior Coach</div>
+            <h4 className="text-2xl font-display font-bold">Hariharan P </h4>
+            <div className="text-highlight font-medium mt-1 mb-3 uppercase tracking-wider text-sm">Head Coach</div>
             <p className="text-sm text-muted-foreground leading-relaxed">Specializing in advanced techniques and personalized coaching to help players reach their peak.</p>
           </div>
         </div>
@@ -153,6 +204,6 @@ function AboutPage() {
           <Link to="/booking" className="mt-7 inline-flex px-6 py-3.5 rounded-lg bg-gradient-to-r from-primary to-highlight text-primary-foreground font-semibold shadow-glow hover:scale-[1.03] transition-transform">Book your first session</Link>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -3,6 +3,8 @@ import { Target, Eye, Heart, Trophy } from "lucide-react";
 import { useEffect, useRef } from "react";
 import heroImg from "@/assets/hero-arena.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
+import yuvarajImg from "@/assets/yuvaraj.jpeg";
+import hariImg from "@/assets/hari.jpeg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -147,7 +149,7 @@ function AboutPage() {
             <div className="order-1 lg:order-2 flex justify-center">
               <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[320px] lg:h-[400px] rounded-3xl overflow-hidden shadow-glow relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&auto=format&fit=crop&q=60" 
+                  src={yuvarajImg} 
                   alt="Yuvaraj Manikandan C" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
@@ -168,7 +170,7 @@ function AboutPage() {
           <div className="card-lift coach-card glass rounded-3xl p-8 border text-center">
             <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-glow mb-6 relative">
               <img 
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&auto=format&fit=crop&q=60" 
+                src={yuvarajImg} 
                 alt="Yuvaraj Manikandan C" 
                 className="w-full h-full object-cover"
               />
@@ -183,7 +185,7 @@ function AboutPage() {
           <div className="card-lift coach-card glass rounded-3xl p-8 border text-center">
             <div className="w-40 h-40 mx-auto rounded-full overflow-hidden shadow-glow mb-6 relative">
               <img 
-                src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&auto=format&fit=crop&q=60" 
+                src={hariImg} 
                 alt="Hariharan P" 
                 className="w-full h-full object-cover"
               />

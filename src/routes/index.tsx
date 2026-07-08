@@ -47,10 +47,7 @@ const reasons = [
 const testimonials = [
   { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
   { n: "Priya S.", r: "Positive environment and like-minded people. Best place to train consistently.", s: "Gym Member" },
-  { n: "Arun M.", r: "The lighting and indoor courts are easily the best in Salem. Booking is also smooth.", s: "Weekend Player" },
-  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
-  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
-  { n: "Karthik R.", r: "Wonderful experience and environment. The courts are top-notch and the staff is super friendly.", s: "Badminton Member" },
+  { n: "Arun M.", r: "The lighting and indoor courts are easily the best in Salem. Booking is also smooth.", s: "Weekend Player" }
 ];
 
 function HomePage() {
@@ -262,8 +259,8 @@ function HomePage() {
             <h2 className="mt-3 text-4xl sm:text-5xl font-display font-bold">From our community</h2>
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-5">
-            {testimonials.map((t) => (
-              <div key={t.n} className="card-lift relative glass-strong rounded-2xl p-6 border">
+            {testimonials.map((t, idx) => (
+              <div key={`${t.n}-${idx}`} className="card-lift relative glass-strong rounded-2xl p-6 border">
                 <Quote className="h-6 w-6 text-primary/60" />
                 <p className="mt-3 text-sm leading-relaxed">{t.r}</p>
                 <div className="mt-5 flex items-center justify-between">
